@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: pg_container
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: ${PG_DEFAULT_USER}
+      POSTGRES_PASSWORD: ${PG_DEFAULT_USER_PASSWORD}
+      DEFAULT_DB:  ${MS_PRODUCTS_DB_NAME}
+      DEFAULT_USER: ${MS_PRODUCTS_USERNAME}
+      DEFAULT_USER_PASSWORD: ${MS_PRODUCTS_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./scripts/database-setup.sh:/docker-entrypoint-initdb.d/database-setup.sh
+    command: ["postgres"]
+    networks:
+      - pg_custom_network
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    networks:
+      - pg_custom_network
+
+networks:
+  pg_custom_network:
+
+
